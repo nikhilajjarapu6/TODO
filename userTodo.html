@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+ <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fjalla+One&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Orbitron:wght@400..900&family=Play:wght@400;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: linear-gradient(to right top, #051937, #2e285f, #672f7e, #a82a8e, #eb128e);
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            font-family: "Noto Sans", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+        }
+       
+        section {
+            padding: 20px;
+        }
+        .header-div {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header-div h1 {
+            width: 250px;
+            color:white;
+            background-color: #051937;
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+        table {
+            width:100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-sizing: border-box;
+            margin-bottom:10px;
+           
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #fff;
+            font-weight: bold;
+        }
+        td a{
+        text-decoration:none;
+        }
+       thead th{
+            background-color: #2e285f;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tbody tr:hover {
+            background-color: #ddd;
+        }
+        .edit-btn, .delete-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: #fff;
+            transition: background-color 0.3s;
+        }
+        .edit-btn:hover, .delete-btn:hover {
+            background-color: #0056b3;
+        }
+        #addtodo, #logout {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: #fff;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            text-decoration: none;
+        }
+        #addtodo:hover, #logout:hover {
+            background-color: #218838;
+        }
+         .edit-btn{
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: #fff;
+            transition: background-color 0.3s;
+           
+        }
+        .edit-btn:hover{
+            background-color: #28a745; ;
+        }
+        .delete{
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer; 
+            background-color: #007bff;
+            transition: background-color 0.3s;
+            color: #fff;
+        }
+        .delete:hover{
+            background-color: red;
+        }
+         .th-text {
+            color: #333;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+         .th-text2 {
+            color: #333;
+            font-weight: bold;
+            text-transform: capitalize;
+        }
+    </style>
+</head>
+<body>
+	 <section>
+        <div class="header-div">
+            <h1>Your Todos</h1>
+        </div>
+        <div class="table-div">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Edit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="todo :${todoList}">
+                        <td th:text="${todo.id}" class="th-text"></td>
+                        <td th:text="${todo.title}" class="th-text" style="color:#218838"></td>
+                        <td th:text="${todo.descrption}" class="th-text2"></td>
+                        <td th:text="${todo.date}" class="th-text"></td>
+                        <td th:text="${todo.status}" class="th-text"></td>
+                        <td>
+                            <a th:href="@{/todo/editTodoById/{id}(id=${todo.id})}">
+                                <button class="edit-btn">Edit</button>
+                            </a>
+                            <a th:href="@{/todo/removeTodo/{id}(id=${todo.id})}">
+                                <button class="delete">Delete</button>
+                            </a>
+                            
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+         <button id="addtodo"> Add Todo</button>
+        <a href="/app/logout"> <button id="logout">Log Out </button></a>
+       
+
+    </section>
+   
+    <script>
+        document.getElementById('addtodo').addEventListener('click', function(){
+            window.open("/todo/addtodo", "_self");
+        })
+        
+        document.querySelectorAll('.delete').forEach(button => {
+        	var todoId =button.getAttribute('data-id')
+        	console.log(todoId)
+            button.addEventListener('click', function(){
+            	 
+                
+                fetch(`/todo/removeTodo/${todoId}`,{
+                    method:'DELETE',
+                    headers:{
+                        'Content-Type':'application/json'
+                    }
+                })
+                .then(response => {
+                    if(response.ok){
+                        window.open('/todo/userTodos','_self');
+                    } else {
+                        console.error("Error occurred while deleting todo");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error occurred: ", error);
+                });
+            });
+        });
+        
+   </script>
+</body>
+</html>
